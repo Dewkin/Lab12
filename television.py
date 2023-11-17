@@ -25,11 +25,11 @@ class Television:
 
     def channel_up(self):
         if self.__status:
-            self.__channel = Television.MIN_CHANNEL if self.__channel == Television.MAX_CHANNEL else self.__channel + 1
+            self.__channel = (self.__channel + 1) % (Television.MAX_CHANNEL + 1)
 
     def channel_down(self):
         if self.__status:
-            self.__channel = Television.MAX_CHANNEL if self.__channel == Television.MIN_CHANNEL else self.__channel - 1
+            self.__channel = (self.__channel - 1) % (Television.MAX_CHANNEL + 1)
 
     def volume_up(self):
         if self.__status:
@@ -47,5 +47,18 @@ class Television:
             if self.__volume > Television.MIN_VOLUME:
                 self.__volume -= 1
 
+    @property
+    def volume(self):
+        return self.__volume
+
+    @property
+    def channel(self):
+        return self.__channel
+
+    @property
+    def is_muted(self):
+        return self.__muted
+
     def __str__(self):
-        return f'Power = {self.__status}, Channel = {self.__channel}, Volume = {self.__volume}'
+        volume_display = 0 if self.__muted else self.__volume
+        return f'Power = {self.__status}, Channel = {self.__channel}, Volume = {volume_display}'
