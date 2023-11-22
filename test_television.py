@@ -18,7 +18,7 @@ def test_mute():
     original_volume = tv.volume
     tv.mute()
     assert tv.is_muted
-    assert tv.volume == original_volume
+    assert tv.volume == 0
     tv.mute()
     assert not tv.is_muted
     assert tv.volume == original_volume
@@ -26,46 +26,39 @@ def test_mute():
 def test_channel_up():
     tv = Television()
     tv.power()
-    original_channel = tv.channel
+    for _ in range(Television.MAX_CHANNEL):
+        tv.channel_up()
+    assert tv.channel == Television.MAX_CHANNEL
     tv.channel_up()
-    assert tv.channel == original_channel + 1
-    # Test for maximum channel limit
-    tv.channel = tv.max_channel
-    tv.channel_up()
-    assert tv.channel == tv.max_channel
+    assert tv.channel == Television.MIN_CHANNEL
+    assert str(tv) == f'Power = True, Channel = {Television.MIN_CHANNEL}, Volume = 0'
 
 def test_channel_down():
     tv = Television()
     tv.power()
-    original_channel = tv.channel
     tv.channel_down()
-    assert tv.channel == original_channel - 1
-    # Test for minimum channel limit
-    tv.channel = tv.min_channel
+    assert tv.channel == Television.MAX_CHANNEL
     tv.channel_down()
-    assert tv.channel == tv.min_channel
+    assert tv.channel == Television.MAX_CHANNEL - 1
+    assert str(tv) == f'Power = True, Channel = {Television.MAX_CHANNEL - 1}, Volume = 0'
 
 def test_volume_up():
     tv = Television()
     tv.power()
+    for _ in range(Television.MAX_VOLUME):
+        tv.volume_up()
+    assert tv.volume == Television.MAX_VOLUME
     tv.volume_up()
-    assert 'Volume = 1' in str(tv)
-    tv.volume_up()
-    assert 'Volume = 2' in str(tv)
-    tv.volume_up()
-    assert 'Volume = 2' in str(tv)
-
+    assert tv.volume == Television.MAX_VOLUME
+    assert str(tv) == f'Power = True, Channel = 0, Volume = {Television.MAX_VOLUME}'
 
 def test_volume_down():
     tv = Television()
     tv.power()
-    original_volume = tv.volume
-    tv.volume_down()
-    assert tv.volume == original_volume - 1
-    # Test for minimum volume limit
-    tv.volume = tv.min_volume
-    tv.volume_down()
-    assert tv.volume == tv.min_volume
+    for _ in range(Television.MAX_VOLUME + 1):
+        tv.volume_down()
+    assert tv.volume == Television.MIN_VOLUME
+    assert str(tv) == f'Power = True, Channel = 0, Volume = {Television.MIN_VOLUME}'
 
 def test_invalid_operations_when_off():
     tv = Television()
