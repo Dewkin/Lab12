@@ -11,6 +11,7 @@ class Television:
         self.__volume = Television.MIN_VOLUME
         self.__channel = Television.MIN_CHANNEL
         self.__previous_volume = Television.MIN_VOLUME
+        self.__volume_display = Television.MIN_VOLUME  # Initialize volume display
 
     def power(self) -> None:
         """Toggles the power status of the television."""
@@ -26,49 +27,41 @@ class Television:
             if not self.__muted:
                 self.__previous_volume = self.__volume
                 self.__volume = Television.MIN_VOLUME
+                self.__volume_display = Television.MIN_VOLUME
             else:
                 self.__volume = self.__previous_volume
+                self.__volume_display = self.__previous_volume
             self.__muted = not self.__muted
 
     def channel_up(self) -> None:
-        """
-        Increases the channel by one.
-        Wraps around to the minimum channel if the maximum channel is reached.
-        """
+        """Increases the channel by one."""
         if self.__status:
             self.__channel = (self.__channel + 1) % (Television.MAX_CHANNEL + 1)
 
     def channel_down(self) -> None:
-        """
-        Decreases the channel by one.
-        Wraps around to the maximum channel if the minimum channel is reached.
-        """
+        """Decreases the channel by one."""
         if self.__status:
             self.__channel = (self.__channel - 1) % (Television.MAX_CHANNEL + 1)
 
     def volume_up(self) -> None:
-        """
-        Increases the volume by one, up to the maximum volume.
-        If the TV is muted, unmutes it before changing the volume.
-        """
+        """Increases the volume by one, up to the maximum volume."""
         if self.__status:
             if self.__muted:
                 self.__muted = False
                 self.__volume = self.__previous_volume
             if self.__volume < Television.MAX_VOLUME:
                 self.__volume += 1
+                self.__volume_display = self.__volume
 
     def volume_down(self) -> None:
-        """
-        Decreases the volume by one, down to the minimum volume.
-        If the TV is muted, unmutes it before changing the volume.
-        """
+        """Decreases the volume by one, down to the minimum volume."""
         if self.__status:
             if self.__muted:
                 self.__muted = False
                 self.__volume = self.__previous_volume
             if self.__volume > Television.MIN_VOLUME:
                 self.__volume -= 1
+                self.__volume_display = self.__volume
 
     @property
     def volume(self) -> int:
@@ -90,5 +83,4 @@ class Television:
         Returns a string representation of the television's status,
         including power status, channel, and volume.
         """
-        volume_display = 0 if self.__muted else self.__volume
-        return f'Power = {self.__status}, Channel = {self.__channel}, Volume = {volume_display}'
+        return f'Power = {self.__status}, Channel = {self.__channel}, Volume = {self.__volume_display}'
